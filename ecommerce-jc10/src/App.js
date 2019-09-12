@@ -9,6 +9,11 @@ import {connect} from 'react-redux'
 import {keepLogin} from './redux/1.actions'
 import ProductDetails from './1.pages/ProductDetails/ProductDetails';
 import Cart from './1.pages/Cart/Cart';
+import AdminDashboard from './1.pages/Admin/AdminDashboard';
+import History from './1.pages/Admin/History'
+import HistoryDetails from './1.pages/Admin/HistoryDetails';
+import ParaSultan from './1.pages/Admin/ParaSultan'
+import Analitycs from './1.pages/Admin/Analitycs'
 
 let cookieObj = new Cookie()
 class App extends Component {
@@ -29,6 +34,12 @@ class App extends Component {
           <Route component={Auth} path='/auth' exact />
           <Route component={ProductDetails} path='/product-details/:id' exact />
           <Route component={Cart} path='/cart' exact />
+          <Route component={AdminDashboard} path='/admindashboard' exact />
+          <Route component={History} path='/history'/>
+          <Route component={HistoryDetails} path='/historydetails/:id' exact />
+          <Route component={Analitycs} path='/analitycs' exact/>
+          <Route component={ParaSultan} path='/parasultan' exact/>
+
         </Switch>
       </div>
     )

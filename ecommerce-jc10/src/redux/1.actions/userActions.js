@@ -12,7 +12,6 @@ export const onLogin = (userObject) => {
      * 
      * userObject = {asalNama : this.state.loginUsername, asalKunci : this.state.loginPassword}
      */
-
     return (dispatch) => {
         dispatch({
             type : 'IS_LOADING'
@@ -114,6 +113,24 @@ export const resetUser = () => {
     return (dispatch) => {
         dispatch({
             type : 'RESET_USER'
+        })
+    }
+}
+
+export const getCartData = (id) => {
+    return (dispatch) => {
+        Axios.get(urlApi + 'cart?userId=' + id)
+        .then(res => {
+            console.log(res)
+          dispatch ({
+              type : 'TESTCART',
+              payload : {
+                  panjangCart : res.data.length
+              }
+          })  
+        })
+        .catch(err => {
+            console.log(err)
         })
     }
 }

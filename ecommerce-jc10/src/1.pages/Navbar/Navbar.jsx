@@ -15,6 +15,7 @@ import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import Cookie from 'universal-cookie'
 import { resetUser } from "./../../redux/1.actions";
+import swal from 'sweetalert';
 
 let cookieObj = new Cookie()
 class NavbarComp extends Component {
@@ -25,6 +26,7 @@ class NavbarComp extends Component {
     onBtnLogout = () => {
         cookieObj.remove('userData')
         this.props.resetUser()
+        swal('Selamat Bertemu Kembali!', 'Anda telah keluar', 'success')
     }
 
     render() {
@@ -40,6 +42,18 @@ class NavbarComp extends Component {
                                 ?
                                 <>
                                     <NavItem>
+                                        {
+                                            this.props.userObj.role === 'admin'
+                                            ?
+                                            <NavLink><Link to='/admindashboard'>Admin Dashboard</Link></NavLink>
+                                            :
+                                            <NavLink><Link to='/cart'><div>Cart : {this.props.jumlahCart} Barang</div></Link></NavLink>
+                                        }
+                                    </NavItem>
+                                     <NavItem>
+                                        <NavLink>Your ID : {this.props.userObj.id ? this.props.userObj.id : null}</NavLink>
+                                    </NavItem>
+                                    <NavItem>
                                         <NavLink>{this.props.userObj.username}</NavLink>
                                     </NavItem>
                                     <NavItem>
@@ -54,10 +68,28 @@ class NavbarComp extends Component {
                                                 Edit Profile
                                             </DropdownItem>
                                             <DropdownItem>
-                                                Cart
+                                                {
+                                                    this.props.role === 'user'
+                                                    ?
+                                                    <Link to='/cart'>
+                                                    Cart
+                                                    </Link>
+                                                    :
+                                                    null    
+                                                }
+                                                
                                             </DropdownItem>
                                             <DropdownItem>
-                                                History
+                                                {
+                                                    this.props.role === 'user'
+                                                    ?
+                                                    <Link to='/history/'>
+                                                    History
+                                                    </Link>
+                                                    :
+                                                    null
+                                                }
+                                                
                                             </DropdownItem>
                                             <DropdownItem divider />
                                             <DropdownItem onClick={this.onBtnLogout}>
@@ -86,7 +118,9 @@ class NavbarComp extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        userObj : state.user
+        userObj : state.user,
+        jumlahCart : state.cart.cartLength,
+        role : state.user.role
     }
 }
 

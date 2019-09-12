@@ -5,17 +5,26 @@ import {urlApi} from '../../3.helpers/database'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import swal from 'sweetalert'
+import { getCartData } from '../../redux/1.actions/userActions';
+import {Redirect} from 'react-router-dom'
+
 
 class ProductDetails extends Component {
 
     state = {
         product : {},
         wishlist : false,
-        qtyInput : 0
+        qtyInput : 0,
+        cart : 0
     }
 
     componentDidMount(){
         this.getProductDetails()
+        this.props.getCartData(this.props.id)
+    }
+
+    componentDidUpdate(){
+         this.props.getCartData(this.props.id)
     }
 
     getProductDetails = () => {
@@ -47,7 +56,7 @@ class ProductDetails extends Component {
                 cartObj.quantity = parseInt(res.data[0].quantity) + parseInt(this.state.qtyInput)
                 Axios.put(urlApi + 'cart/' + res.data[0].id, cartObj)
                 .then((res) => {
-                    swal('Add to cart', 'Item added to cart', 'success')
+                    swal('Add to cart', 'Item added to cart', 'success')    
                 })
                 .catch((err) => {
                     console.log(err)
@@ -55,6 +64,7 @@ class ProductDetails extends Component {
             }else{
                 Axios.post(urlApi + 'cart', cartObj)
                 .then((res) => {
+                    this.props.getCartData(this.props.id)
                     swal('Add to cart', 'Item added to cart', 'success')
                 })
                 .catch((err) => {
@@ -66,9 +76,12 @@ class ProductDetails extends Component {
             console.log(err)
         })
     }
-    
+
 
     render() {
+        if(this.props.role === ''){
+            return <Redirect to='/'></Redirect>
+        }
         var {nama, harga, discount, deskripsi, img} = this.state.product
         return (
             <div className='container mt-3'>
@@ -121,15 +134,23 @@ class ProductDetails extends Component {
                         <div className='row mt-4'>
                             <div className="col-md-4">
                                 {
-                                    this.props.username !== ''
+                                    this.props.role === 'admin'
                                     ?
-                                    <input  type="button" onClick={this.addToCart} className='btn btn-success btn-block' value="Tambah ke Keranjang"/>
+                                   <h3>Welcome,{this.props.username} As Admin</h3>
                                     :
-                                    <Link to="/auth" style={{textDecoration:'none'}}>
-                                        <input type="button" className='btn btn-success btn-block' value="Tambah ke Keranjang"/>
+                                    <>
+                                    <div>
+                                        <input type="button" onClick={this.addToCart} className='btn btn-success btn-block' value="Tambah ke Keranjang"/>
+                                    </div>
+                                    <div>
+                                    <Link to="/cart" style={{textDecoration:'none'}}>
+                                        <input type="button" className='btn btn-success btn-block' value="Lihat Keranjang"/>
                                     </Link>
+                                    </div>
+                                    </>
                                 }
-                            </div>
+                        </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -141,8 +162,9 @@ class ProductDetails extends Component {
 const mapStateToProps = state => {
     return {
         username : state.user.username,
-        id : state.user.id
+        id : state.user.id,
+        role : state.user.role
     }
 }
 
-export default connect(mapStateToProps)(ProductDetails)
+export default connect(mapStateToProps, {getCartData})(ProductDetails)

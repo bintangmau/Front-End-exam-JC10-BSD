@@ -1,4 +1,4 @@
-const INITIAL_STATE = {id : 0, username : '', role : '', cookie : false, loading : false, msg : ''}
+const INITIAL_STATE = {id : 0, username : '', role : '', cookie : false, loading : false, msg : '', showUser : false}
 
 export default (state = INITIAL_STATE, action) => {
     switch(action.type){
@@ -14,6 +14,8 @@ export default (state = INITIAL_STATE, action) => {
             return{...INITIAL_STATE, username : action.payload.username, id : action.payload.id, role : action.payload.role, cookie:true}
         case 'RESET_USER':
             return {...INITIAL_STATE}
+        case 'SHOW_USER' : 
+            return {...state, showUser : true}
         default:
             return state
     }

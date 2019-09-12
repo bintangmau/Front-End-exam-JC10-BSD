@@ -6,6 +6,7 @@ import {urlApi} from '../../3.helpers/database'
 import swal from 'sweetalert'
 import Carousel from '../../2.components/General/Carousel'
 import {Link} from 'react-router-dom'
+import {getCartData} from '../../redux/1.actions/userActions'
 
 // GIT PULL ORIGIN MASTER
 class Home extends Component {
@@ -17,6 +18,12 @@ class Home extends Component {
 
     componentDidMount(){
         this.getDataProducts()
+        // this.props.getCartData(this.props.id)
+    }
+
+
+    componentDidUpdate(){
+         this.props.getCartData(this.props.id)
     }
 
     getDataProducts = () => {
@@ -32,11 +39,15 @@ class Home extends Component {
 
     renderProducts = () => {
         let jsx = this.state.productData.map(val => {
-            return(
-                <ProductBox nama={val.nama} harga={val.harga} discount={val.discount} img={val.img} id={val.id} />
+            return (
+                <ProductBox nama={val.nama} harga={val.harga} discount={val.discount} img={val.img} productId={val.id} tampilCart={this.props.getCartData} />
             )
         })
         return jsx
+    }
+
+    onLoginBtnHandler = () => {
+        this.props.onLogin({asalId: this.state.loginUsername})
     }
 
     render() {
@@ -51,7 +62,7 @@ class Home extends Component {
                             </div>
                         </div> 
                         <div className="card p-2">
-                            
+                
                             <form ref="formFilter" style={{boxShadow:"none", fontSize:"14px"}}>
                                 <div className="form-label col-sm-6 text-left font-weight-bold pl-1 text-secondary  -1">Cari Produk</div>
                                 <input className="form-control form-control-sm mb-2" placeholder="Cari Produk"></input>
@@ -83,8 +94,11 @@ class Home extends Component {
     }
 }
 
+
 export default connect(state => {
     return {
-        username : state.user.username
+        username : state.user.username,
+        roll : state.user.role,
+        id : state.user.id
     }
-})(Home)
+},{getCartData})(Home)
